@@ -1,5 +1,6 @@
 from .base import Widget
 
+from typing import Callable, Any
 
 class Button(Widget):
     """
@@ -18,10 +19,15 @@ class Button(Widget):
     :param on_press:    Function to execute when pressed
     :type on_press:     ``callable``
     """
-    def __init__(self, label, id=None, style=None, on_press=None, enabled=None,
-                    background_color=None):
+    def __init__(self,
+                 label: str,
+                 id: str = None,
+                 style=None,
+                 on_press: Callable = None,
+                 enabled: bool = None,
+                 background_color: Any = None) -> None:
         super().__init__(id=id, style=style, label=label, on_press=on_press,
-                        enabled=enabled, background_color=background_color)
+                         enabled=enabled, background_color=background_color)
 
     def _configure(self, label, on_press, enabled, background_color):
         self.label = label
@@ -30,7 +36,7 @@ class Button(Widget):
         self.background_color = background_color
 
     @property
-    def label(self):
+    def label(self) -> str:
         """
         :returns: The label value
         :rtype: ``str``
@@ -38,7 +44,7 @@ class Button(Widget):
         return self._label
 
     @label.setter
-    def label(self, value):
+    def label(self, value: str) -> None:
         """
         Set the label value
 
@@ -52,11 +58,11 @@ class Button(Widget):
         self._set_label(str(value))
         self.rehint()
 
-    def _set_label(self, value):
+    def _set_label(self, value: str) -> None:
         raise NotImplementedError('Button widget must define _set_label()')
 
     @property
-    def on_press(self):
+    def on_press(self) -> Callable:
         """
         The callable function for when the button is pressed
 
@@ -65,7 +71,7 @@ class Button(Widget):
         return self._on_press
 
     @on_press.setter
-    def on_press(self, handler):
+    def on_press(self, handler: Callable) -> None:
         """
         Set the function to be executed on button press.
 
@@ -75,11 +81,11 @@ class Button(Widget):
         self._on_press = handler
         self._set_on_press(handler)
 
-    def _set_on_press(self, value):
+    def _set_on_press(self, value:Callable) -> None:
         pass
 
     @property
-    def enabled(self):
+    def enabled(self) -> bool:
         """
         Indicates whether the button can be pressed by the user.
 
@@ -89,7 +95,7 @@ class Button(Widget):
         return self._enabled
 
     @enabled.setter
-    def enabled(self, value):
+    def enabled(self, value: bool) -> None:
         """
         Set if the button can be pressed by the user.
 
@@ -102,11 +108,11 @@ class Button(Widget):
             self._enabled = value
         self._set_enabled(value)
 
-    def _set_enabled(self, value):
+    def _set_enabled(self, value: bool) -> None:
         raise NotImplementedError('Button widget must define _set_enabled()')
 
     @property
-    def background_color(self):
+    def background_color(self) -> Any:
         """
         Indicates the button background color.
         :returns:   Button background color. Default is None.
@@ -115,7 +121,7 @@ class Button(Widget):
         return self._background_color
 
     @background_color.setter
-    def background_color(self, value):
+    def background_color(self, value: Any) -> None:
         """
         Set the button background color.
         :param value:   Button background color
@@ -125,6 +131,6 @@ class Button(Widget):
         self._background_color = value
         self._set_background_color(value)
 
-    def _set_background_color(self, value):
+    def _set_background_color(self, value: Any) -> None:
         raise NotImplementedError('Button widget must define \
                                     _set_background_color()')
