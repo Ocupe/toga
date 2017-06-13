@@ -1,5 +1,6 @@
 from builtins import id as identifier
 from .command import CommandSet
+from typing import Callable, List
 
 
 class App:
@@ -25,8 +26,13 @@ class App:
     _MAIN_WINDOW_CLASS = None
     app = None
 
-    def __init__(self, name, app_id, icon=None,
-                 id=None, startup=None, document_types=None):
+    def __init__(self,
+                 name: str,
+                 app_id: str,
+                 icon: str = None,
+                 id: str = None,
+                 startup: Callable = None,
+                 document_types: List[str] = None) -> None:
         '''
         Instantiate a new application
 
@@ -57,7 +63,7 @@ class App:
 
         self.name = name
         self._app_id = app_id
-        self._id = id if id else identifier(self)
+        self._id = id if id else str(identifier(self))
 
         self.icon = icon
 
@@ -69,7 +75,7 @@ class App:
         self._startup_method = startup
 
     @property
-    def app_id(self):
+    def app_id(self) -> str:
         '''
         The identifier for the app.
 
@@ -80,7 +86,7 @@ class App:
         return self._app_id
 
     @property
-    def id(self):
+    def id(self) -> str:
         '''
         The DOM identifier for the app.
 
@@ -91,7 +97,7 @@ class App:
         return self._id
 
     @property
-    def commands(self):
+    def commands(self) -> CommandSet:
         '''
         The commands registered with this application.
 
@@ -100,7 +106,7 @@ class App:
         return self._commands
 
     @property
-    def documents(self):
+    def documents(self) -> List[str]:
         '''
         Return the list of documents associated with this app.
 
@@ -108,7 +114,7 @@ class App:
         '''
         return self._documents
 
-    def add_document(self, doc):
+    def add_document(self, doc) -> None:
         '''
         Add a new document to this app.
 
@@ -117,7 +123,7 @@ class App:
         doc.app = self
         self._documents.append(doc)
 
-    def open_document(self, fileURL):
+    def open_document(self, fileURL: str) -> None:
         '''
         Add a new document to this app.
 
@@ -126,13 +132,13 @@ class App:
         '''
         raise NotImplementedError('Application class must define open_document()')
 
-    def _create_menus(self):
+    def _create_menus(self) -> None:
         '''
         Create the menus for this application
         '''
         raise NotImplementedError('Application class must define _create_menus()')
 
-    def startup(self):
+    def startup(self) -> None:
         '''
         Create and show the main window for the application
         '''
@@ -144,7 +150,7 @@ class App:
 
         self.main_window.show()
 
-    def main_loop(self):
+    def main_loop(self) -> None:
         '''
         Invoke the application to handle user input.
 
@@ -152,7 +158,7 @@ class App:
         '''
         raise NotImplementedError('Application class must define main_loop()')
 
-    def exit(self):
+    def exit(self) -> None:
         '''
         Shut down the application
         '''

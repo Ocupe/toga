@@ -10,12 +10,17 @@ from .libs import *
 from .window import Window
 from .widgets.icon import Icon, TIBERIUS_ICON
 
+from typing import Tuple, Callable, List
+
 
 class MainWindow(Window):
-    def __init__(self, title=None, position=(100, 100), size=(640, 480)):
+    def __init__(self,
+                 title: str = None,
+                 position: Tuple[int, int] = (100, 100),
+                 size: Tuple[int, int] = (640, 480)) -> None:
         super(MainWindow, self).__init__(title, position, size)
 
-    def on_close(self):
+    def on_close(self) -> None:
         self.app._impl.terminate_(self._delegate)
 
 
@@ -79,7 +84,12 @@ class AppDelegate(NSObject):
 class App(AppInterface):
     _MAIN_WINDOW_CLASS = MainWindow
 
-    def __init__(self, name, app_id, icon=None, startup=None, document_types=None):
+    def __init__(self,
+                 name: str,
+                 app_id: str,
+                 icon: str = None,
+                 startup: Callable = None,
+                 document_types: List[str] = None) -> None:
         # Set the icon for the app
         Icon.app_icon = Icon.load(icon, default=TIBERIUS_ICON)
 
@@ -91,7 +101,7 @@ class App(AppInterface):
             document_types=document_types
         )
 
-    def _startup(self):
+    def _startup(self) -> None:
         self._impl = NSApplication.sharedApplication()
         self._impl.setActivationPolicy_(NSApplicationActivationPolicyRegular)
 
@@ -122,11 +132,11 @@ class App(AppInterface):
         self._menu_items = {}
         self._create_menus()
 
-    def open_document(self, fileURL):
+    def open_document(self, fileURL: str) -> None:
         '''Add a new document to this app.'''
         print("STUB: If you want to handle opening documents, implement App.open_document(fileURL)")
 
-    def _create_menus(self):
+    def _create_menus(self) -> None:
         # Only create the menu if the menu item index has been created.
         if hasattr(self, '_menu_items'):
             self._menu_items = {}
@@ -162,7 +172,7 @@ class App(AppInterface):
             # Set the menu for the app.
             self._impl.mainMenu = menubar
 
-    def main_loop(self):
+    def main_loop(self) -> None:
         # Stimulate the build of the app
         self._startup()
         # Modify signal handlers to make sure Ctrl-C is caught and handled.
@@ -171,6 +181,5 @@ class App(AppInterface):
         self._impl.activateIgnoringOtherApps_(True)
         self._impl.run()
 
-    def exit(self):
+    def exit(self) -> None:
         self._impl.terminate(None)
-
