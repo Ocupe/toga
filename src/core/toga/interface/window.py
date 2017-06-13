@@ -1,4 +1,5 @@
 from .command import CommandSet
+from typing import Tuple
 
 
 class Window:
@@ -8,9 +9,13 @@ class Window:
     _CONTAINER_CLASS = None
     _DIALOG_MODULE = None
 
-    def __init__(self, id_=None, title=None,
-                 position=(100, 100), size=(640, 480),
-                 resizeable=True, closeable=True, minimizable=True):
+    def __init__(self, id_: int = None,
+                 title: str = None,
+                 position: Tuple[int, int]=(100, 100),
+                 size: Tuple[int, int]=(640, 480),
+                 resizeable: bool = True,
+                 closeable: bool = True,
+                 minimizable: bool = True) -> None:
         '''
         Instantiates a window
 
@@ -65,15 +70,19 @@ class Window:
             'minimizable': minimizable,
         }
 
-    def _create(self):
+    def _create(self) -> None:
         self.create()
         self._configure(**self._config)
 
-    def _configure(self, title, position, size, resizeable, closeable, minimizable):
+    def _configure(self,
+                   title,
+                   position,
+                   size,
+                   resizeable, closeable, minimizable) -> None:
         self.title = title
 
     @property
-    def app(self):
+    def app(self) -> None:
         '''
         Instance of the :class:`toga.App` that this window belongs to
 
@@ -82,18 +91,18 @@ class Window:
         return self._app
 
     @app.setter
-    def app(self, app):
+    def app(self, app) -> None:
         if self._app:
             raise Exception("Window is already associated with an App")
 
         self._app = app
         self._set_app(app)
 
-    def _set_app(self, app):
+    def _set_app(self, app) -> None:
         pass
 
     @property
-    def title(self):
+    def title(self) -> str:
         '''
         Title of the window
 
@@ -102,7 +111,7 @@ class Window:
         return self._title
 
     @title.setter
-    def title(self, title):
+    def title(self, title: str) -> None:
         if not title:
             title = "Toga"
 
@@ -110,7 +119,7 @@ class Window:
         self._title = title
 
     @property
-    def toolbar(self):
+    def toolbar(self) -> CommandSet:
         '''
         Commands registered for display on the toolbar.
 
@@ -118,7 +127,7 @@ class Window:
         '''
         return self._toolbar
 
-    def _create_toolbar(self):
+    def _create_toolbar(self) -> None:
         '''
         Create the toolbar for this window
         '''
@@ -134,7 +143,7 @@ class Window:
         return self._content
 
     @content.setter
-    def content(self, widget):
+    def content(self, widget) -> None:
         # Save the content widget.
         widget._update_layout()
 
@@ -154,11 +163,11 @@ class Window:
 
         self._set_content(widget)
 
-    def _set_content(self, widget):
+    def _set_content(self, widget) -> None:
         pass
 
     @property
-    def size(self):
+    def size(self) -> Tuple[int, int]:
         '''
         Size of the window, as width, height
 
@@ -167,15 +176,15 @@ class Window:
         return self._size
 
     @size.setter
-    def size(self, size):
+    def size(self, size: Tuple[int, int]) -> None:
         self._size = size
         self._set_size(size)
 
-    def _set_size(self, size):
+    def _set_size(self, size: Tuple[int, int]) -> None:
         pass
 
     @property
-    def position(self):
+    def position(self) -> Tuple[int, int]:
         '''
         Position of the window, as x, y
 
@@ -184,20 +193,20 @@ class Window:
         return self._position
 
     @position.setter
-    def position(self, position):
+    def position(self, position: Tuple[int, int]) -> None:
         self._position = position
         self._set_position(position)
 
-    def _set_position(self, position):
+    def _set_position(self, position: Tuple[int, int]) -> None:
         pass
 
-    def show(self):
+    def show(self) -> None:
         '''
         Show window, if hidden
         '''
         raise NotImplementedError('Window class must define show()')
 
-    def on_close(self):
+    def on_close(self) -> None:
         pass
 
     def info_dialog(self, title, message):
@@ -214,7 +223,7 @@ class Window:
 
     def stack_trace_dialog(self, title, message, content, retry=False):
         return self._DIALOG_MODULE.stack_trace(self, title, message,
-                                                content, retry)
+                                               content, retry)
 
     def save_file_dialog(self, title, suggested_filename, file_types):
         return self._DIALOG_MODULE.save_file(self, title, suggested_filename,

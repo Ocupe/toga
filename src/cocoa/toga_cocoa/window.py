@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from toga.interface.window import Window as WindowInterface
 from toga.interface.command import Command as BaseCommand, GROUP_BREAK, SECTION_BREAK
 
@@ -8,7 +10,7 @@ from .utils import process_callback
 from . import dialogs
 
 
-def toolbar_identifier(cmd):
+def toolbar_identifier(cmd) -> str:
     return 'ToolbarItem-%s' % id(cmd)
 
 
@@ -95,11 +97,18 @@ class Window(WindowInterface):
     _CONTAINER_CLASS = Container
     _DIALOG_MODULE = dialogs
 
-    def __init__(self, title=None, position=(100, 100), size=(640, 480), resizeable=True, closeable=True, minimizable=True):
-        super().__init__(title=title, position=position, size=size, resizeable=resizeable, closeable=closeable, minimizable=minimizable)
+    def __init__(self,
+                 title: str = None,
+                 position: Tuple[int, int] = (100, 100),
+                 size: Tuple[int, int] = (640, 480),
+                 resizeable: bool = True,
+                 closeable: bool = True,
+                 minimizable: bool = True):
+        super().__init__(title=title, position=position, size=size, resizeable=resizeable, closeable=closeable,
+                         minimizable=minimizable)
         self._create()
 
-    def create(self):
+    def create(self) -> None:
         # OSX origin is bottom left of screen, and the screen might be
         # offset relative to other screens. Adjust for this.
         screen = NSScreen.mainScreen().visibleFrame
@@ -135,7 +144,7 @@ class Window(WindowInterface):
 
     # Create a new frame on the same position with the new size doing
     #   a animation.
-    def _set_size(self, size):
+    def _set_size(self, size: Tuple[int, int]) -> None:
         if self._impl:
             screen = NSScreen.mainScreen().visibleFrame
             position = NSMakeRect(
@@ -146,7 +155,7 @@ class Window(WindowInterface):
             )
             self._impl.setFrame_display_animate_(position, True, True)
 
-    def _create_toolbar(self):
+    def _create_toolbar(self) -> None:
         self._toolbar_items = {}
         for cmd in self.toolbar:
             if isinstance(cmd, BaseCommand):
@@ -156,7 +165,7 @@ class Window(WindowInterface):
         self._toolbar_impl.setDelegate_(self._delegate)
         self._impl.setToolbar_(self._toolbar_impl)
 
-    def _set_content(self, widget):
+    def _set_content(self, widget) -> None:
         self._impl.setContentView_(self._container._impl)
 
         # Enforce a minimum size based on the content
@@ -176,10 +185,10 @@ class Window(WindowInterface):
         )
         self._container._impl.addConstraint_(self._min_height_constraint)
 
-    def _set_title(self, title):
+    def _set_title(self, title: str) -> None:
         self._impl.setTitle_(title)
 
-    def show(self):
+    def show(self) -> None:
         self._impl.makeKeyAndOrderFront_(None)
 
         # The first render of the content will establish the
@@ -194,5 +203,5 @@ class Window(WindowInterface):
             height=self._impl.contentView.frame.size.height,
         )
 
-    def close(self):
+    def close(self) -> None:
         self._impl.close()
