@@ -14,7 +14,7 @@ class Point:
 
 class Layout:
     def __init__(self,
-                 node: Widget,
+                 node: 'Widget',
                  width: float = None,
                  height: float = None,
                  top: float = 0,
