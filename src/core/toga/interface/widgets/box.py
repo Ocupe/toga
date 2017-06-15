@@ -1,4 +1,5 @@
 from .base import Widget
+from typing import List, Any
 
 
 class Box(Widget):
@@ -17,11 +18,15 @@ class Box(Widget):
                         box.
     :type children:     ``list``
     '''
-    def __init__(self, id=None, style=None, children=None):
+
+    def __init__(self,
+                 id: str = None,
+                 style: Any = None,
+                 children: List[Widget] = None) -> None:
         super().__init__(id=id, style=style, children=children)
         self._children = []
 
-    def _configure(self, children):
+    def _configure(self, children: List[Widget]) -> None:
         if children:
             for child in children:
                 self.add(child)

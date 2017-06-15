@@ -10,8 +10,7 @@ from .libs import *
 from .window import Window
 from .widgets.icon import Icon, TIBERIUS_ICON
 
-from typing import Tuple, Callable, List
-
+from typing import Tuple, Callable, List, Any
 
 class MainWindow(Window):
     def __init__(self,
@@ -129,7 +128,7 @@ class App(AppInterface):
 
         # Create the lookup table of menu items,
         # then force the creation of the menus.
-        self._menu_items = {}
+        self._menu_items = {}  # type: Any
         self._create_menus()
 
     def open_document(self, fileURL: str) -> None:

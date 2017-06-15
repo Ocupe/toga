@@ -1,18 +1,24 @@
 from builtins import id as identifier
 from colosseum import CSS
+from typing import Any, List
 
 
 class Point:
-    def __init__(self, top, left):
+    def __init__(self, top: float, left: float) -> None:
         self.top = top
         self.left = left
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<Point (%s,%s)>' % (self.left, self.top)
 
 
 class Layout:
-    def __init__(self, node, width=None, height=None, top=0, left=0):
+    def __init__(self,
+                 node: Widget,
+                 width: float = None,
+                 height: float = None,
+                 top: float = 0,
+                 left: float = 0):
         self.node = node
         self.width = width
         self.height = height
@@ -20,7 +26,7 @@ class Layout:
         self.left = left
         self._dirty = True
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         if self.node:
             return '<Layout%s (%sx%s @ %s,%s)>' % (
                 {
@@ -42,7 +48,7 @@ class Layout:
                 self.left, self.top
             )
 
-    def __eq__(self, value):
+    def __eq__(self, value: 'Layout') -> bool:
         return all([
             self.width == value.width,
             self.height == value.height,
@@ -50,7 +56,7 @@ class Layout:
             self.left == value.left
         ])
 
-    def reset(self):
+    def reset(self) -> None:
         self.width = None
         self.height = None
         self.top = 0
@@ -64,11 +70,11 @@ class Layout:
     # If dirty is None, the layout is currently being re-evaluated.
     ######################################################################
     @property
-    def dirty(self):
+    def dirty(self) -> bool:
         return self._dirty
 
     @dirty.setter
-    def dirty(self, value):
+    def dirty(self, value: bool) -> None:
         self._dirty = value
         for child in self.node.children:
             child.layout.dirty = value
@@ -77,15 +83,15 @@ class Layout:
     # Implied geometry properties
     ######################################################################
     @property
-    def right(self):
+    def right(self) -> float:
         return self.left + self.width
 
     @property
-    def bottom(self):
+    def bottom(self) -> float:
         return self.top + self.height
 
     @property
-    def absolute(self):
+    def absolute(self) -> Point:
         if self.node.parent:
             parent_layout = self.node.parent.layout
             return Point(
@@ -96,7 +102,7 @@ class Layout:
             return Point(top=self.top, left=self.left)
 
     @property
-    def origin(self):
+    def origin(self) -> Point:
         if self.node.parent:
             parent_layout = self.node.parent.layout
             return Point(
@@ -126,7 +132,11 @@ class Widget:
                     new one will be created for the widget.
     :type style:    :class:`colosseum.CSSNode`
     '''
-    def __init__(self, id=None, style=None, **config):
+
+    def __init__(self,
+                 id: str = None,
+                 style: CSS = None,
+                 **config) -> None:
         self._id = id if id else identifier(self)
         self._parent = None
         self._children = None
@@ -144,11 +154,11 @@ class Widget:
         else:
             self.style = CSS()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<%s:%s>" % (self.__class__.__name__, id(self))
 
     @property
-    def id(self):
+    def id(self) -> str:
         '''
         The node identifier. This id can be used to target CSS directives
 
@@ -157,7 +167,7 @@ class Widget:
         return self._id
 
     @property
-    def style(self):
+    def style(self) -> CSS:
         '''
         The style object for this widget.
 
@@ -167,11 +177,11 @@ class Widget:
         return self._style
 
     @style.setter
-    def style(self, value):
+    def style(self, value: CSS) -> None:
         self._style = value.bind(self)
 
     @property
-    def parent(self):
+    def parent(self) -> 'Widget':
         '''
         The parent of this node.
 
@@ -180,7 +190,7 @@ class Widget:
         return self._parent
 
     @property
-    def children(self):
+    def children(self) -> List[Any]:
         '''
         The children of this node.
 
@@ -195,7 +205,7 @@ class Widget:
         else:
             return self._children
 
-    def add(self, child):
+    def add(self, child: Any) -> None:
         '''
         Add a widget as a child of this one.
 
@@ -219,7 +229,7 @@ class Widget:
         self._add_child(child)
 
     @property
-    def app(self):
+    def app(self) -> Any:
         '''
         The App to which this widget belongs.
 
@@ -228,7 +238,7 @@ class Widget:
         return self._app
 
     @app.setter
-    def app(self, app):
+    def app(self, app) -> None:
         '''
         Set the app to which this widget belongs
 
