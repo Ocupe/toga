@@ -3,9 +3,10 @@ from .base import Widget
 from ..libs import *
 
 
-class TogaWebView(WebView):
+class TogaWebView(WKWebView):
     @objc_method
-    def webView_didFinishLoadForFrame_(self, sender, frame) -> None:
+    def webView_didFinishNavigation_(self, sender, frame) -> None:
+        self.interface._impl.update_dom()
         if self.interface.on_webview_load:
             self.interface.on_webview_load(self.interface)
 
@@ -15,7 +16,6 @@ class TogaWebView(WebView):
 
     @objc_method
     def keyDown_(self, event) -> None:
-        print('in keyDown', event.keyCode)
         if self.interface.on_key_down:
             self.interface.on_key_down(event.keyCode, event.modifierFlags)
 
@@ -24,26 +24,32 @@ class WebView(Widget):
     def create(self):
         self.native = TogaWebView.alloc().init()
         self.native.interface = self.interface
-
-        self.native.downloadDelegate = self.native
-        self.native.frameLoadDelegate = self.native
-        self.native.policyDelegate = self.native
-        self.native.resourceLoadDelegate = self.native
-        self.native.uIDelegate = self.native
+        self.native.delegate = self.native
+        self.native.navigationDelegate = self.native
 
         # Add the layout constraints
         self.add_constraints()
 
+        self._dom = None
+
+    def update_dom(self):
+        # fixme this code produces a race condition due to the fact that the callback is invoked from the
+        # obj-c side. If we request the dom imidiatly after the page has loaded,
+        # it is possible that self.dom has not been updated yet.
+        def callback(result: ObjCInstance) -> None:
+            self._dom = str(ObjCInstance(result))
+
+        self.native.evaluateJavaScript_completionHandler_('document.documentElement.outerHTML', callback)
+
+    @property
     def get_dom(self):
-        # Utilises Step 2) of:
-        # https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/DisplayWebContent/Tasks/SaveAndLoad.html
-        html = self.native.mainFrame.DOMDocument.documentElement.outerHTML  ##domDocument.markupString
-        return html
+        return self._dom
 
     def set_url(self, value):
         if value:
-            request = NSURLRequest.requestWithURL(NSURL.URLWithString(self.interface.url))
-            self.native.mainFrame.loadRequest(request)
+            self._dom = None
+            request = NSURLRequest.requestWithURL_(NSURL.URLWithString_(self.interface.url))
+            self.native.loadRequest_(request)
 
     def set_content(self, root_url, content):
         self.native.mainFrame.loadHTMLString_baseURL(content, NSURL.URLWithString(root_url))
