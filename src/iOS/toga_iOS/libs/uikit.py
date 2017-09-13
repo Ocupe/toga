@@ -97,6 +97,17 @@ def NSTextAlignment(alignment):
         NATURAL_ALIGNED: NSNaturalTextAlignment,
     }[alignment]
 
+# UIAlertController
+UIAlertController = ObjCClass('UIAlertController')
+UIAlertAction = ObjCClass('UIAlertAction')
+
+UIAlertControllerStyleActionSheet = 0
+UIAlertControllerStyleAlert = 1
+
+UIAlertActionStyleDefault = 0
+UIAlertActionStyleCancel = 1
+UIAlertActionStyleDestructive = 2
+
 # UIControl.h
 
 # UIControlEvents
